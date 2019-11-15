@@ -106,16 +106,17 @@ class SignInGoogleBase extends Component {
             .doSignInWithGoogle()
             .then(socialAuthUser => {
                 // Create a user in the data
-                return this.props.firebase.user(socialAuthUser.user.uid)
-                .set({
-                    username: socialAuthUser.user.displayName,
-                    email: socialAuthUser.user.email,
-                    roles: {}
-                });
-                
+                if (socialAuthUser.additionalUserInfo.isNewUser) {
+                    return this.props.firebase.user(socialAuthUser.user.uid)
+                    .set({
+                        username: socialAuthUser.user.displayName,
+                        email: socialAuthUser.user.email,
+                        roles: {}
+                    });
+                }
             })
             .then(() => {
-                this.setState({ error: null});
+                this.setState({ error: null });
                 this.props.history.push(ROUTES.HOME);
             })
             .catch(error => {
