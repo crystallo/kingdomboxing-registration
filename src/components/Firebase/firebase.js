@@ -17,6 +17,8 @@ class Firebase {
         app.initializeApp(config);
 
         this.emailAuthProvider = app.auth.EmailAuthProvider;
+        this.fieldValue = app.firestore.FieldValue;
+
         this.auth = app.auth();
         this.db = app.firestore();
 
@@ -74,6 +76,11 @@ class Firebase {
     user = uid => this.db.doc(`users/${uid}`);
 
     users = () => this.db.collection(`users`);
+
+    // Event API
+    event = uid => this.db.doc(`events/${uid}`);
+
+    events = () => this.db.collection(`events`);
 }
 
 export default Firebase;

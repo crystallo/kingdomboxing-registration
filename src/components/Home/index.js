@@ -1,18 +1,14 @@
 import React from 'react';
-import { compose } from 'recompose';
-
-import { withAuthorization, withEmailVerification } from '../Session';
+import { AddEventForm } from '../Event'; 
 
 const HomePage = () => (
     <div>
         <h1> Home </h1>
-        <p>The Home Page is accessible by every signed in user.</p>
+        <p>The Home Page is accessible by everyone.</p>
+        <AddEventForm />
     </div>
 );
 
 const condition = authUser => !!authUser;
 
-export default compose(
-    withEmailVerification,
-    withAuthorization(condition)
-) (HomePage);
+export default HomePage;
