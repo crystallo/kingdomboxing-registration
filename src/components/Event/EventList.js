@@ -16,7 +16,7 @@ class EventList extends Component {
     }
 
     componentDidMount() {
-        this.setState({ lpadomg: true });
+        this.setState({ loading: true });
 
         this.unsubscribe= this.props.firebase
             .events()

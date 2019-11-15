@@ -16,7 +16,7 @@ const AddEventPage = () => (
 
 const INITIAL_STATE = {
     name: '',
-    date: '',
+    date: Date.now(),
     description: '',
     error: null
 };
@@ -33,6 +33,8 @@ class AddEventFormBase extends Component {
         this.props.firebase.events().add({
             name: name,
             date: date,
+            dateObject: new Date(date).getTime(),
+            description: description,
             createAt: this.props.firebase.fieldValue.serverTimestamp()
         })
         .then(() => {

@@ -38,7 +38,7 @@ class EventItem extends Component {
         const { event, loading } = this.state;
 
         return (
-            
+            <div></div>
         );
     }
 }

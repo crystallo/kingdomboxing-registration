@@ -81,6 +81,11 @@ class Firebase {
     event = uid => this.db.doc(`events/${uid}`);
 
     events = () => this.db.collection(`events`);
+
+    // Registry API
+    registry = uid => this.db.doc(`registries/${uid}`);
+
+    registries = () => this.db.collection(`registries`);
 }
 
 export default Firebase;
