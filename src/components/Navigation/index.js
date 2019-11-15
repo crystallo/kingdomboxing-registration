@@ -12,13 +12,20 @@ import * as ROUTES from '../../constants/routes';
 import * as ROLES from '../../constants/roles';
 
 const Navigation = ({ authUser }) => (
-    <div>
-        <AuthUserContext.Consumer>
-            {authUser =>
-                authUser? <NavigationAuth2 authUser={authUser} /> : <NavigationNonAuth />
-            }
-        </AuthUserContext.Consumer>
-    </div>
+    <Navbar expand="lg" variant="dark" bg="dark">
+        <Link className="navbar-brand" to={ROUTES.HOME}>Kingdom Boxing</Link>
+        <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="mr-auto">
+                <Link className="nav-link" to={ROUTES.HOME}>Event</Link>
+                <Link className="nav-link" to={ROUTES.CONTACT_US}>Contact Us</Link>
+            </Nav>
+            <AuthUserContext.Consumer>
+                {authUser =>
+                    authUser? <NavigationAuth3 authUser={authUser} /> : <NavigationNonAuth3 />
+                }
+            </AuthUserContext.Consumer>
+        </Navbar.Collapse>
+    </Navbar>
 );
 
 const NavigationAuth = ({ authUser }) => (
@@ -50,7 +57,7 @@ const NavigationAuth2 = ({ authUser }) => (
         <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
                 <Link className="nav-link" to={ROUTES.HOME}>Event</Link>
-                <Link className="nav-link" to={ROUTES.HOME}>Contact Us</Link>
+                <Link className="nav-link" to={ROUTES.CONTACT_US}>Contact Us</Link>
             </Nav>
             <Nav>
                 <NavDropDown title={<FontAwesomeIcon icon="user-circle" size="2x" />} alignRight>
@@ -70,7 +77,7 @@ const NavigationNonAuth = () => (
         <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
                 <Link className="nav-link" to={ROUTES.HOME}>Event</Link>
-                <Link className="nav-link" to={ROUTES.HOME}>Contact Us</Link>
+                <Link className="nav-link" to={ROUTES.CONTACT_US}>Contact Us</Link>
             </Nav>
             <Nav>
                 <Link className="nav-link" to={ROUTES.HOME}><FontAwesomeIcon icon={['fab', 'facebook']} size="lg" /></Link>
@@ -80,5 +87,28 @@ const NavigationNonAuth = () => (
         </Navbar.Collapse>
     </Navbar>
 );
+
+const NavigationAuth3 = ({ authUser }) => (
+    <Nav>
+        <NavDropDown title={<FontAwesomeIcon icon="user-circle" size="lg" />} alignRight>
+            <NavItem className="dropdown-item">{authUser.email}</NavItem>
+            <NavDropDown.Divider />
+            {!!authUser.roles[ROLES.ADMIN] && (
+                <NavDropDown.Item><Link className="dropdown-item" to={ROUTES.ADMIN}>Admin Dashboard</Link></NavDropDown.Item>
+            )}
+            <NavDropDown.Item><Link className="dropdown-item" to={ROUTES.ACCOUNT}>Account</Link></NavDropDown.Item>
+            <NavItem><SignOutButton /></NavItem>
+        </NavDropDown>
+    </Nav>
+);
+
+const NavigationNonAuth3 = () => (
+    <Nav>
+        <Link className="nav-link" to={ROUTES.HOME}><FontAwesomeIcon icon={['fab', 'facebook']} size="lg" /></Link>
+        <Link className="nav-link" to={ROUTES.HOME}><FontAwesomeIcon icon={['fab', 'instagram']} size="lg" /></Link>
+        <Link className="nav-link" to={ROUTES.SIGN_IN}>Sign In</Link>
+    </Nav>
+);
+
 
 export default Navigation;

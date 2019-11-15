@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 
+import Table from 'react-bootstrap/Table';
+import Container from 'react-bootstrap/Container';
+
 import { withFirebase } from '../Firebase';
 
 class EventList extends Component {
@@ -15,9 +18,9 @@ class EventList extends Component {
     componentDidMount() {
         this.setState({ lpadomg: true });
 
-        this.unsubsrcibe= this.props.firebase
+        this.unsubscribe= this.props.firebase
             .events()
-            .onSnapShot(snapshot => {
+            .onSnapshot(snapshot => {
                 let events = [];
 
                 snapshot.forEach(doc =>
@@ -32,18 +35,37 @@ class EventList extends Component {
     }
 
     componentWillUnmount() {
-        this.unsubsrcibe();
-    }
+        this.unsubscribe();
+      }
 
     render() {
-        const { users, loading } = this.state;
+        const { events, loading } = this.state;
 
         return (
-            <div>
-                {loading && <div>Loading ...</div>}
-            </div>
+            <Container>
+                <Table bordered striped hover>
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                        </tr>
+                        
+                    </thead>
+                    <tbody>
+                        {loading && <tr span="3"><td>Loading ...</td></tr>}
+                        {events.map(event => (
+                            <tr>
+                                <td>{event.name}</td>
+                                <td>{event.date}</td>
+                                <td>{event.description}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </Container>
         )
     }
 }
 
-export default EventList;
+export default withFirebase(EventList);

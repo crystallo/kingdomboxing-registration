@@ -46,7 +46,6 @@ class AddEventFormBase extends Component {
     };
 
     onChange = event => {
-        console.log([event.target.name]);
         this.setState({ [event.target.name]: event.target.value });
     };
 
@@ -55,7 +54,7 @@ class AddEventFormBase extends Component {
 
         return (
             <Container>
-                <Form width="50px" onSubmit={this.onSubmit}>
+                <Form onSubmit={this.onSubmit}>
                     <Form.Group controlId="formGroupName">
                         <Form.Label>Event Name</Form.Label>
                         <Form.Control 
