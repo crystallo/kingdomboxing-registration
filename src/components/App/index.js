@@ -17,6 +17,7 @@ import SignInPage from '../SignIn';
 import SignUpPage from '../SignUp';
 import ContactUsPage from '../ContactUs';
 import RegistrationPage from '../Registration';
+import EventPage from '../Event';
 
 import * as ROUTES from '../../constants/routes';
 import { withAuthentication } from '../Session';
@@ -41,6 +42,7 @@ const App = () => (
             <Route path={ROUTES.ADMIN} component={AdminPage} />
             <Route path={ROUTES.CONTACT_US} component={ContactUsPage} />
             <Route path={ROUTES.REGISTRATION} component={RegistrationPage} />
+            <Route path={ROUTES.EVENT} component={EventPage} />
         </div>
     </Router>
 );

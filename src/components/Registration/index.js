@@ -37,7 +37,9 @@ class RegistrationFormBase extends Component {
     }
 
     componentDidMount() {
-        var query = this.props.firebase.events().where("dateObject", ">", Date.now());
+        var query = this.props.firebase.events()
+            .where("dateObject", ">", Date.now());
+
         query.get().then(results => {
             if (results.empty) {
                 // TODO: Disable registration since no event is available
@@ -46,7 +48,7 @@ class RegistrationFormBase extends Component {
                 let events = [];
 
                 results.forEach(doc => {
-                    events.push({ ...doc.data(), uid: doc.id })
+                    events.push({ ...doc.data(), uid: doc.id });
                 })
 
                 this.setState({ events,

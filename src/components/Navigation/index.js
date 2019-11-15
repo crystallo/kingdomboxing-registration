@@ -16,7 +16,7 @@ const Navigation = ({ authUser }) => (
         <Link className="navbar-brand" to={ROUTES.HOME}>Kingdom Boxing</Link>
         <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-                <Link className="nav-link" to={ROUTES.REGISTRATION}>Event</Link>
+                <Link className="nav-link" to={ROUTES.EVENT}>Event</Link>
                 <Link className="nav-link" to={ROUTES.CONTACT_US}>Contact Us</Link>
             </Nav>
             <AuthUserContext.Consumer>

@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 
+import Table from 'react-bootstrap/Table';
+import Container from 'react-bootstrap/Container';
+
 import { withFirebase } from '../Firebase';
+import RegistryList from '../Registry';
 
 class EventItem extends Component {
     constructor(props) {
@@ -14,11 +18,13 @@ class EventItem extends Component {
     }
 
     componentDidMount() {
-        if (this.state.event) {
+        /*if (this.state.event) {
             return;
-        }
+        }*/
 
         this.setState({ loading: true });
+
+        console.log(this.props.match.params.id);
 
         this.unsubscribe = this.props.firebase
             .event(this.props.match.params.id)
@@ -38,7 +44,12 @@ class EventItem extends Component {
         const { event, loading } = this.state;
 
         return (
-            <div></div>
+            <Container>
+                
+                <RegistryList eventid={this.props.match.params.id}/>
+            </Container>
         );
     }
 }
+
+export default withFirebase(EventItem);

@@ -51,8 +51,6 @@ class AdminPage extends Component {
 
                 {loading && <div>Loading ...</div>}
 
-                
-
                 <UserList users={users} />
             </div>
         );

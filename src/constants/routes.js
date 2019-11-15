@@ -7,3 +7,5 @@ export const ADMIN = '/admin';
 export const PASSWORD_FORGET = '/pw-forget';
 export const CONTACT_US = '/contactus';
 export const REGISTRATION = '/registration';
+export const EVENT = '/event';
+export const EVENT_DETAILS = '/event/:id';

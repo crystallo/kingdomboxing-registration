@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
 
 import { withFirebase } from '../Firebase';
+import * as ROUTES from '../../constants/routes';
 
 class EventList extends Component {
     constructor(props) {
@@ -49,16 +51,19 @@ class EventList extends Component {
                             <th>Event</th>
                             <th>Date</th>
                             <th>Description</th>
+                            <th>Details</th>
                         </tr>
-                        
                     </thead>
+
                     <tbody>
-                        {loading && <tr span="3"><td>Loading ...</td></tr>}
+                        {loading && 
+                            <tr><td colspan="3" align="center">Loading ...</td></tr>}
                         {events.map(event => (
                             <tr>
                                 <td>{event.name}</td>
                                 <td>{event.date}</td>
                                 <td>{event.description}</td>
+                                <td><Link to={{pathname: `${ROUTES.EVENT}/${event.uid}`}}>Details</Link></td>
                             </tr>
                         ))}
                     </tbody>
