@@ -34,10 +34,12 @@ class RegistrationFormBase extends Component {
     constructor(props) {
         super(props);
         this.state = { ...INITIAL_STATE };
+        this.setState({ eventid: this.props.eventid });
     }
 
     componentDidMount() {
         var query = this.props.firebase.events()
+            .orderBy("dateObject", "desc")
             .where("dateObject", ">", Date.now());
 
         query.get().then(results => {
@@ -51,8 +53,9 @@ class RegistrationFormBase extends Component {
                     events.push({ ...doc.data(), uid: doc.id });
                 })
 
-                this.setState({ events,
-                    eventid: events[0].uid });
+                this.setState({ events });
+                if (this.state.eventid.empty)
+                    this.setState({eventid: events[0].uid });
             };
         })
     }

@@ -22,6 +22,7 @@ class EventList extends Component {
 
         this.unsubscribe= this.props.firebase
             .events()
+            .orderBy("date", "desc")
             .onSnapshot(snapshot => {
                 let events = [];
 
@@ -57,7 +58,7 @@ class EventList extends Component {
 
                     <tbody>
                         {loading && 
-                            <tr><td colspan="3" align="center">Loading ...</td></tr>}
+                            <tr><td colspan="4" align="center">Loading ...</td></tr>}
                         {events.map(event => (
                             <tr>
                                 <td>{event.name}</td>

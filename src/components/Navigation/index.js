@@ -12,12 +12,16 @@ import * as ROUTES from '../../constants/routes';
 import * as ROLES from '../../constants/roles';
 
 const Navigation = ({ authUser }) => (
-    <Navbar expand="lg" variant="dark" bg="dark">
+    <Navbar variant="dark" bg="dark">
         <Link className="navbar-brand" to={ROUTES.HOME}>Kingdom Boxing</Link>
         <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
                 <Link className="nav-link" to={ROUTES.EVENT}>Event</Link>
                 <Link className="nav-link" to={ROUTES.CONTACT_US}>Contact Us</Link>
+            </Nav>
+            <Nav>
+                <Link className="nav-link" to={ROUTES.HOME}><FontAwesomeIcon icon={['fab', 'facebook']} size="lg" /></Link>
+                <Link className="nav-link" to={ROUTES.HOME}><FontAwesomeIcon icon={['fab', 'instagram']} size="lg" /></Link>
             </Nav>
             <AuthUserContext.Consumer>
                 {authUser =>
@@ -44,11 +48,9 @@ const NavigationAuth = ({ authUser }) => (
 
 const NavigationNonAuth = () => (
     <Nav>
-        <Link className="nav-link" to={ROUTES.HOME}><FontAwesomeIcon icon={['fab', 'facebook']} size="lg" /></Link>
-        <Link className="nav-link" to={ROUTES.HOME}><FontAwesomeIcon icon={['fab', 'instagram']} size="lg" /></Link>
+        
         <Link className="nav-link" to={ROUTES.SIGN_IN}>Sign In</Link>
     </Nav>
 );
-
 
 export default Navigation;

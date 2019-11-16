@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
+import Spinner from 'react-bootstrap/Spinner';
 
 import { withFirebase } from '../Firebase';
 
@@ -57,8 +58,10 @@ class RegistryList extends Component {
 
                     <tbody>
                         {loading &&
-                            <tr><td colspan="4" align="center">Loading ...</td></tr>}
-                        {empty && 
+                            <tr><td colspan="4" align="center">
+                                    <Spinner animation="border" variant="secondary" />
+                                </td></tr>}
+                        {!loading && empty && 
                             <tr><td colspan="4" align="center">No item. </td></tr>}
                         {registries.map(registry => (
                             <tr>

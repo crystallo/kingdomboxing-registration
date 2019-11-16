@@ -1,79 +1,24 @@
 import React, { Component } from 'react';
 import { compose } from 'recompose';
+import { Switch, Route } from 'react-router-dom';
 
+import Container from 'react-bootstrap/Container';
 
 import { withFirebase } from '../Firebase';
 import { withAuthorization, withEmailVerification } from '../Session';
 import * as ROLES from '../../constants/roles';
+import { AddEventForm, EventList, EventItem } from '../Event';
+import * as ROUTES from '../../constants/routes';
 
-class AdminPage extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            loading: false,
-            users: []
-        };
-    }
-
-    componentDidMount() {
-        this.setState({ loading: true });
-
-        this.unsubscribe = this.props.firebase.users()
-            .onSnapshot(snapshot => {
-                let users = [];
-
-                snapshot.forEach(doc =>
-                    users.push({ ...doc.data(), uid: doc.id })
-                );
-
-                this.setState({
-                    users,
-                    loading: false
-                });
-            });
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe();
-    }
-
-    render() {
-        const { users, loading } = this.state;
-        const numUsers = users.length
-
-        console.log(users);
-
-        return (
-            <div>
-                <h1>Admin</h1>
-                <p> The Admin Page is accessible by every signed in admin user. </p>
-
-                {loading && <div>Loading ...</div>}
-
-                <UserList users={users} />
-            </div>
-        );
-    }
-}
-
-const UserList = ({ users }) => (
-    <u1>
-        {users.map(user => (
-            <li key={user.uid}>
-                <span>
-                    {user.uid}
-                </span>
-                <span>
-                    {user.email}
-                </span>
-                <span>
-                    {user.username}
-                </span>
-            </li>
-        ))}
-    </u1>
-);
+const AdminPage = () => (
+    <Container>
+        <AddEventForm />
+        <Switch>
+            <Route exact path={ROUTES.EVENT_DETAILS} component={EventItem} />
+            <Route exact path={ROUTES.ADMIN} component={EventList} />
+        </Switch>
+    </Container>
+)
 
 const condition = authUser => authUser && !!authUser.roles[ROLES.ADMIN];
 

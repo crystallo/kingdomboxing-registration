@@ -45,7 +45,6 @@ class EventItem extends Component {
 
         return (
             <Container>
-                
                 <RegistryList eventid={this.props.match.params.id}/>
             </Container>
         );

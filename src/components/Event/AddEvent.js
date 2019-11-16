@@ -8,10 +8,10 @@ import Button from 'react-bootstrap/Button';
 import { withFirebase } from '../Firebase';
 
 const AddEventPage = () => (
-    <div>
+    <Container>
         <h1> Add Event </h1>
         <AddEventForm />
-    </div>
+    </Container>
 );
 
 const INITIAL_STATE = {
