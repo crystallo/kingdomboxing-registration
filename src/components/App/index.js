@@ -18,6 +18,8 @@ import SignUpPage from '../SignUp';
 import ContactUsPage from '../ContactUs';
 import RegistrationPage from '../Registration';
 import EventPage from '../Event';
+import { AddEventPage } from '../Event';
+import Footer from '../Footer';
 
 import * as ROUTES from '../../constants/routes';
 import { withAuthentication } from '../Session';
@@ -43,6 +45,9 @@ const App = () => (
             <Route path={ROUTES.CONTACT_US} component={ContactUsPage} />
             <Route path={ROUTES.REGISTRATION} component={RegistrationPage} />
             <Route path={ROUTES.EVENT} component={EventPage} />
+            <Route path={ROUTES.ADD_EVENT} component={AddEventPage} />
+
+            <Footer />
         </div>
     </Router>
 );

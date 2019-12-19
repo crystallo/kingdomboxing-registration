@@ -6,6 +6,8 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 
 import { withFirebase } from '../Firebase';
+import { withAuthorization } from '../Session';
+import * as ROLES from '../../constants/roles';
 
 const AddEventPage = () => (
     <Container>
@@ -101,10 +103,17 @@ class AddEventFormBase extends Component {
     }
 }
 
+const condition = authUser => authUser && !!authUser.roles[ROLES.ADMIN];
+
 const AddEventForm = compose(
-    withFirebase
+    withFirebase,
+    withAuthorization(condition)
 ) (AddEventFormBase);
 
-export default AddEventPage;
+
+export default compose(
+    withFirebase,
+    withAuthorization(condition)
+) (AddEventPage);
 
 export { AddEventForm };

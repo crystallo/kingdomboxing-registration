@@ -180,12 +180,14 @@ class RegistrationFormBase extends Component {
                         </Form.Group>
                     </Form.Row>
 
-                    <Button variant="primary mr-2" type="submit">
-                        Submit
-                    </Button>
-                    <Button variant="outline-secondary" type="reset">
-                        Clear
-                    </Button>
+                    <Form.Group>
+                        <Button variant="primary mr-2" type="submit">
+                            Submit
+                        </Button>
+                        <Button variant="outline-secondary" type="reset">
+                            Clear
+                        </Button>
+                    </Form.Group>
                 </Form>
                 {error && <div><Alert color="warning">{ error.message }</Alert></div>}
             </Container>

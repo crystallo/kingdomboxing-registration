@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
 import Jumbotron from 'react-bootstrap/Jumbotron';
+import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 
-import { AddEventForm, EventList } from '../Event'; 
 import { withFirebase } from '../Firebase';
 import RegistrationForm from '../Registration';
 
@@ -36,16 +36,16 @@ class HomePage extends Component {
         const { event } = this.state;
 
         return (
-            <Jumbotron>
-                <h1>{event.name} name</h1>
-                <p>Event poster / description</p>
-                <p>
-                    <h2>Register Now!</h2>
-                </p>
-                <p>
-                    <RegistrationForm eventid={event.uid} />
-                </p>
-            </Jumbotron>
+            <div>
+                <Jumbotron>
+                    <h1>{event.name} name</h1>
+                    <p>Event poster / description</p>
+                    <p>
+                        <h2>Register Now!</h2>
+                    </p>
+                </Jumbotron>
+                <p><RegistrationForm eventid={event.uid} /></p>
+            </div>
         );
     }
     

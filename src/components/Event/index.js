@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
 
-import AddEventForm from './AddEvent';
+import AddEventPage, { AddEventForm } from './AddEvent';
 import EventList from './EventList';
 import EventItem from './EventItem';
 import * as ROUTES from '../../constants/routes';
@@ -20,4 +20,4 @@ const EventPage = () => (
 
 export default EventPage;
 
-export { EventList, EventItem, AddEventForm };
+export { EventList, EventItem, AddEventForm, AddEventPage };

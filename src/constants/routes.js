@@ -9,3 +9,4 @@ export const CONTACT_US = '/contactus';
 export const REGISTRATION = '/registration';
 export const EVENT = '/event';
 export const EVENT_DETAILS = '/event/:id';
+export const ADD_EVENT = '/addevent';
