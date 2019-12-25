@@ -9,26 +9,35 @@ import Col from 'react-bootstrap/Col';
 import Alert from 'react-bootstrap/Alert';
 
 import { withFirebase } from '../Firebase';
-import * as ROUTES from '../../constants/routes';
-
-const RegistrationPage = () => (
-    <div>
-        <h1>Register </h1>
-        <RegistrationForm />
-    </div>
-);
 
 const INITIAL_STATE = {
-    first: '',
-    last: '',
+    gym: '',
+    coach: '',
+    contact: '',
     email: '',
-    height: '',
-    weight: 0,
-    fights: '',
+    fighters: [{usaboxingnumber: '',
+                first: '',
+                last: '',
+                weight: '',
+                bouts: '',
+                sex: '',
+                birthday: '',
+                x: ''}],
     eventid: '',
     events: [],
     error: null
 };
+
+const INITIAL_FIGHTERS = [
+    {usaboxingnumber: '',
+     first: '',
+     last: '',
+     weight: '',
+     bouts: '',
+     sex: '',
+     birthday: '',
+     x: ''}
+];
 
 class RegistrationFormBase extends Component {
     constructor(props) {
@@ -57,62 +66,120 @@ class RegistrationFormBase extends Component {
                 if (this.state.eventid.empty)
                     this.setState({eventid: events[0].uid });
             };
-        })
+        });
     }
 
     onSubmit = event => {
         const {
-            first,
-            last,
+            gym,
+            coach,
+            contact,
             email,
-            height,
-            weight,
-            fights,
+            fighters,
             eventid,
             error
-        } = this.state
+        } = this.state;
 
-        console.log(eventid);
+        duplicated_fighters_idx = [];
 
-        // TODO: Check for duplicate registration
-        this.props.firebase.registries().add({
-            eventid: eventid,
-            first: first,
-            last: last,
-            email: email,
-            height: height,
-            weight: weight,
-            fights: fights
-        })
-        .then(() => {
-            // TODO: Redirect user 
-            // TODO: Send verification email
-            this.setState({ ...INITIAL_STATE });
-        })
-        .catch(error => {
-            this.setState({ error });
-        })
+        // Check for duplicate registration
+        for (i = 0; i < fighters.length; i++) {
+            var query = this.props.firebase.registries()
+            .where("eventid", "==", eventid)
+            .where("usaboxingnumber", "==", fighters[i].usaboxingnumber);
 
-        event.preventDefault();
-    };
+            query.get().then(results => {
+                if (!results.empty) {
+                    duplicated_fighters_idx.add(i);
+                }
+            });
+        }
 
-    onChange = event => {
-        this.setState({ [event.target.name]: event.target.value });
+        if (duplicated_fighters_idx.empty) {
+            for (let fighter of fighters) {
+                this.props.firebase.registries().add({
+                    eventid: eventid,
+                    gym: gym,
+                    coach: coach,
+                    contact: contact,
+                    email: email,
+                    usaboxingnumber: fighter.usaboxingnumber,
+                    first: fighter.first,
+                    last: fighter.last,
+                    sex: fighter.sex,
+                    phone: fighter.phone,
+                    birthday: fighter.birthday,
+                    weight: fighter.weight,
+                    bouts: fighter.bouts
+                })
+                .then(() => {
+                    // TODO: Redirect user 
+                    // TODO: Send verification email
+                    
+                })
+                .catch(error => {
+                    this.setState({ error });
+                })
+
+                if (!error)
+                    this.setState({ ...INITIAL_STATE, fighters: INITIAL_FIGHTERS });
+        
+                event.preventDefault();
+            }
+        }
+    }
+
+    onChange = (event) => {
+        if(["usaboxingnumber", 
+            "first", 
+            "last", 
+            "weight", 
+            "bouts", 
+            "sex", 
+            "birthday", 
+            "phone"].includes(event.target.name)) {
+            let fighters = [...this.state.fighters];
+            fighters[event.target.dataset.id][event.target.name] = event.target.value;
+            this.setState({ fighters });
+        } else {
+            this.setState({ [event.target.name]: event.target.value });
+        }
+    }
+
+    addFighter = () => {
+        this.setState({
+            fighters: this.state.fighters.concat([{
+                usaboxingnumber: '',
+                first: '',
+                last: '',
+                weight: '',
+                bouts: '',
+                sex: '',
+                birthday: '',
+                phone: ''
+            }])
+        });
+    }
+
+    removeFighter = idx => () => {
+        this.setState({
+            fighters: this.state.fighters.filter((f, fidx) => fidx !== idx)
+        });
     }
 
     render() {
-        const { first, last, email, height, weight, fights, events, eventid, error  } = this.state;
+        const { gym, coach, email, events, contact,
+            eventid, error, fighters } = this.state;
 
         return (
             <Container>
-                <Form onSubmit={this.onSubmit}>
+                <Form onSubmit={this.onSubmit} onChange={this.onChange} method="post">
                     <Form.Group controlId="formGridEventid">
                         <Form.Label>Event</Form.Label>
                         <Form.Control 
                             as="select"
                             name="eventid"
-                            value={eventid}
-                            onChange={this.onChange} >
+                            value={eventid}>
                             {events.map(event => (
                                 <option value={event.uid} key={event.uid}>{event.name}</option>
                             ))}
@@ -125,60 +192,143 @@ class RegistrationFormBase extends Component {
                             name="email"
                             value={email}
                             type="email" 
-                            onChange={this.onChange}
                             placeholder="Enter email" />
                     </Form.Group>
 
                     <Form.Row>
                         <Form.Group as={Col} controlID="formGridFirst">
-                            <Form.Label>First</Form.Label>
+                            <Form.Label>Gym</Form.Label>
                             <Form.Control 
-                                name="first"
-                                value={first}
-                                type="first" 
-                                onChange={this.onChange}
-                                placeholder="Enter first name" />
+                                name="gym"
+                                value={gym}
+                                type="text" 
+                                placeholder="Enter gym name" />
                         </Form.Group>
                         <Form.Group as={Col} controlID="formGridLast">
-                            <Form.Label>Last</Form.Label>
+                            <Form.Label>Coach</Form.Label>
                             <Form.Control 
-                                name="last"
-                                value={last}
-                                type="last" 
-                                onChange={this.onChange}
-                                placeholder="Enter last name" />
+                                name="coach"
+                                value={coach}
+                                type="text" 
+                                placeholder="Enter coach name" />
+                        </Form.Group>
+                        <Form.Group as={Col} controlID="formGridLast">
+                            <Form.Label>Phone Number</Form.Label>
+                            <Form.Control 
+                                name="contact"
+                                value={contact}
+                                type="contact" 
+                                placeholder="Enter phone number" />
                         </Form.Group>
                     </Form.Row>
+                        {fighters.map((fighter, idx) => {
+                            return (
+                                <div>
+                                    <Form.Row>
+                                        <h3>Fighter {idx+1} </h3>
+                                        {idx > 0 && <p>
+                                            <Button 
+                                                size="sm"
+                                                type="button" 
+                                                variant="danger"
+                                                onClick={this.removeFighter(idx)}>
+                                                X
+                                            </Button>
+                                        </p>}
+                                    </Form.Row>
 
-                    <Form.Row>
-                        <Form.Group as={Col} controlID="formGridWeight">
-                            <Form.Label>Weight (lbs)</Form.Label>
-                            <Form.Control 
-                                name="weight"
-                                value={weight}
-                                type="number" 
-                                onChange={this.onChange}
-                                placeholder="Enter weight" />
-                        </Form.Group>
-                        <Form.Group as={Col} controlID="formGridHeight">
-                            <Form.Label>Height</Form.Label>
-                            <Form.Control 
-                                name="height"
-                                value={height}
-                                type="height" 
-                                onChange={this.onChange}
-                                placeholder="Enter height" />
-                        </Form.Group>
-                        <Form.Group as={Col} controlID="formGridFights">
-                            <Form.Label>Fights</Form.Label>
-                            <Form.Control 
-                                name="fights"
-                                value={fights}
-                                type="number" 
-                                onChange={this.onChange}
-                                placeholder="Enter number of fights" />
-                        </Form.Group>
-                    </Form.Row>
+                                    <Form.Row>
+                                        <Form.Group as={Col}>
+                                            <Form.Label>USA Boxing #</Form.Label>
+                                            <Form.Control 
+                                                type="number"
+                                                name="usaboxingnumber"
+                                                value={fighter.usaboxingnumber}
+                                                data-id={idx} />
+                                        </Form.Group>
+
+                                        <Form.Group as={Col}>
+                                            <Form.Label>First</Form.Label>
+                                            <Form.Control 
+                                                type="text"
+                                                name="first"
+                                                value={fighter.first}
+                                                data-id={idx} />
+                                        </Form.Group>
+
+                                        <Form.Group as={Col}>
+                                            <Form.Label>Last</Form.Label>
+                                            <Form.Control 
+                                                type="text"
+                                                name="last"
+                                                value={fighter.last}
+                                                data-id={idx} />
+                                        </Form.Group>
+                                    </Form.Row>
+
+                                    <Form.Row>
+                                        <Form.Group as={Col}>
+                                            <Form.Label>Sex</Form.Label>
+                                            <Form.Control 
+                                                as="Select"
+                                                name="sex"
+                                                value={fighter.sex}
+                                                data-id={idx}>
+                                                <option>Male</option>
+                                                <option>Female</option>
+                                            </Form.Control>
+                                        </Form.Group>
+
+                                        <Form.Group as={Col}>
+                                            <Form.Label>Phone Number</Form.Label>
+                                            <Form.Control 
+                                                type="tel"
+                                                name="phone"
+                                                value={fighter.phone}
+                                                data-id={idx} />
+                                        </Form.Group>
+
+                                        <Form.Group as={Col}>
+                                            <Form.Label>Birthday</Form.Label>
+                                            <Form.Control 
+                                                type="date"
+                                                name="birthday"
+                                                value={fighter.birthday}
+                                                data-id={idx} />
+                                        </Form.Group>
+                                    </Form.Row>
+
+                                    <Form.Row>
+                                        <Form.Group as={Col}>
+                                            <Form.Label>Weight</Form.Label>
+                                            <Form.Control 
+                                                width="33%"
+                                                name="weight"
+                                                value={fighter.weight}
+                                                data-id={idx} />
+                                        </Form.Group>
+
+                                        <Form.Group as={Col}>
+                                            <Form.Label>Number of Bouts</Form.Label>
+                                            <Form.Control 
+                                                width="33%"
+                                                type="number"
+                                                name="bouts"
+                                                value={fighter.bouts}
+                                                data-id={idx} />
+                                        </Form.Group>
+                                    </Form.Row>
+                                </div>
+                            )
+                        })
+                    }
+
+                    <Form.Group>
+                        <Button variant="outline-primary" type="button"
+                            onClick={this.addFighter}>
+                            Add Another Fighter
+                        </Button>
+                    </Form.Group>
 
                     <Form.Group>
                         <Button variant="primary mr-2" type="submit">
