@@ -28,22 +28,10 @@ const INITIAL_STATE = {
     error: null
 };
 
-const INITIAL_FIGHTERS = [
-    {usaboxingnumber: '',
-     first: '',
-     last: '',
-     weight: '',
-     bouts: '',
-     sex: '',
-     birthday: '',
-     phone: ''}
-];
-
 class RegistrationFormBase extends Component {
     constructor(props) {
         super(props);
         this.state = { ...INITIAL_STATE };
-        this.setState({ eventid: this.props.eventid });
     }
 
     componentDidMount() {
@@ -61,6 +49,7 @@ class RegistrationFormBase extends Component {
             error
         } = this.state;
 
+        console.log(eventid);
         let duplicated_fighters = [];
 
         for (let fighter of fighters) {
@@ -70,7 +59,6 @@ class RegistrationFormBase extends Component {
                 .where("usaboxingnumber", "==", fighter.usaboxingnumber);
             
             query.get().then(results => {
-                console.log(results);
                 if (results.empty) {
                     this.props.firebase.registries().add({
                         eventid: eventid,
@@ -91,15 +79,14 @@ class RegistrationFormBase extends Component {
                         this.setState({ error });
                     })
                 } else {
-                    console.log(results);
+                    console.log("areadly exist", results);
                     duplicated_fighters.concat(fighter);
                 }
             });
         }
 
         if (!error) {
-            this.setState({ ...INITIAL_STATE, fighters: INITIAL_FIGHTERS });
-            this.updateEventID();
+            this.resetForm();
         }
 
         event.preventDefault();
@@ -160,10 +147,25 @@ class RegistrationFormBase extends Component {
                 })
 
                 this.setState({ events });
-                if (this.state.eventid.empty)
-                    this.setState({eventid: events[0].uid });
+                this.setState({eventid: events[0].uid });
             };
         });
+    }
+
+    resetForm = () => {
+        this.setState({ ...INITIAL_STATE, 
+            fighters: [
+                {usaboxingnumber: '',
+                first: '',
+                last: '',
+                weight: '',
+                bouts: '',
+                sex: '',
+                birthday: '',
+                phone: ''}
+            ] });
+
+        this.updateEventID();
     }
 
     render() {
@@ -333,7 +335,8 @@ class RegistrationFormBase extends Component {
                         <Button variant="primary mr-2" type="submit">
                             Submit
                         </Button>
-                        <Button variant="outline-secondary" type="reset">
+                        <Button variant="outline-secondary" type="button"
+                            onClick={this.resetForm}>
                             Clear
                         </Button>
                     </Form.Group>

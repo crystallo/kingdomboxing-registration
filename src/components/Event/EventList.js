@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { compose } from 'recompose';
 
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
 
 import { withFirebase } from '../Firebase';
+import { withAuthorization } from '../Session';
+import * as ROLES from '../../constants/roles';
 import * as ROUTES from '../../constants/routes';
 
 class EventList extends Component {
@@ -74,4 +77,9 @@ class EventList extends Component {
     }
 }
 
-export default withFirebase(EventList);
+const condition = authUser => authUser && !!authUser.roles[ROLES.ADMIN];
+
+export default compose(
+    withAuthorization(condition),
+    withFirebase
+)(EventList);

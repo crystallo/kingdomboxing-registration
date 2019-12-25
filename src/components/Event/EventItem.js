@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
+import { compose } from 'recompose';
+
 
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
 
 import { withFirebase } from '../Firebase';
+import { withAuthorization } from '../Session';
 import RegistryList from '../Registry';
+import * as ROLES from '../../constants/roles';
 
 class EventItem extends Component {
     constructor(props) {
@@ -18,10 +22,6 @@ class EventItem extends Component {
     }
 
     componentDidMount() {
-        /*if (this.state.event) {
-            return;
-        }*/
-
         this.setState({ loading: true });
 
         console.log(this.props.match.params.id);
@@ -51,4 +51,9 @@ class EventItem extends Component {
     }
 }
 
-export default withFirebase(EventItem);
+const condition = authUser => authUser && !!authUser.roles[ROLES.ADMIN];
+
+export default compose(
+    withAuthorization(condition),
+    withFirebase
+)(EventItem);
