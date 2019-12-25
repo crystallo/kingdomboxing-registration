@@ -22,7 +22,7 @@ const INITIAL_STATE = {
                 bouts: '',
                 sex: '',
                 birthday: '',
-                x: ''}],
+                phone: ''}],
     eventid: '',
     events: [],
     error: null
@@ -36,7 +36,7 @@ const INITIAL_FIGHTERS = [
      bouts: '',
      sex: '',
      birthday: '',
-     x: ''}
+     phone: ''}
 ];
 
 class RegistrationFormBase extends Component {
@@ -47,26 +47,7 @@ class RegistrationFormBase extends Component {
     }
 
     componentDidMount() {
-        var query = this.props.firebase.events()
-            .orderBy("dateObject", "desc")
-            .where("dateObject", ">", Date.now());
-
-        query.get().then(results => {
-            if (results.empty) {
-                // TODO: Disable registration since no event is available
-                console.log("No documents found");
-            } else {
-                let events = [];
-
-                results.forEach(doc => {
-                    events.push({ ...doc.data(), uid: doc.id });
-                })
-
-                this.setState({ events });
-                if (this.state.eventid.empty)
-                    this.setState({eventid: events[0].uid });
-            };
-        });
+        this.updateEventID();
     }
 
     onSubmit = event => {
@@ -80,53 +61,48 @@ class RegistrationFormBase extends Component {
             error
         } = this.state;
 
-        duplicated_fighters_idx = [];
+        let duplicated_fighters = [];
 
-        // Check for duplicate registration
-        for (i = 0; i < fighters.length; i++) {
+        for (let fighter of fighters) {
+            // Check for duplicate fighter
             var query = this.props.firebase.registries()
-            .where("eventid", "==", eventid)
-            .where("usaboxingnumber", "==", fighters[i].usaboxingnumber);
-
+                .where("eventid", "==", eventid)
+                .where("usaboxingnumber", "==", fighter.usaboxingnumber);
+            
             query.get().then(results => {
-                if (!results.empty) {
-                    duplicated_fighters_idx.add(i);
+                console.log(results);
+                if (results.empty) {
+                    this.props.firebase.registries().add({
+                        eventid: eventid,
+                        gym: gym,
+                        coach: coach,
+                        contact: contact,
+                        email: email,
+                        usaboxingnumber: fighter.usaboxingnumber,
+                        first: fighter.first,
+                        last: fighter.last,
+                        sex: fighter.sex,
+                        phone: fighter.phone,
+                        birthday: fighter.birthday,
+                        weight: fighter.weight,
+                        bouts: fighter.bouts
+                    })
+                    .catch(error => {
+                        this.setState({ error });
+                    })
+                } else {
+                    console.log(results);
+                    duplicated_fighters.concat(fighter);
                 }
             });
         }
 
-        if (duplicated_fighters_idx.empty) {
-            for (let fighter of fighters) {
-                this.props.firebase.registries().add({
-                    eventid: eventid,
-                    gym: gym,
-                    coach: coach,
-                    contact: contact,
-                    email: email,
-                    usaboxingnumber: fighter.usaboxingnumber,
-                    first: fighter.first,
-                    last: fighter.last,
-                    sex: fighter.sex,
-                    phone: fighter.phone,
-                    birthday: fighter.birthday,
-                    weight: fighter.weight,
-                    bouts: fighter.bouts
-                })
-                .then(() => {
-                    // TODO: Redirect user 
-                    // TODO: Send verification email
-                    
-                })
-                .catch(error => {
-                    this.setState({ error });
-                })
-
-                if (!error)
-                    this.setState({ ...INITIAL_STATE, fighters: INITIAL_FIGHTERS });
-        
-                event.preventDefault();
-            }
+        if (!error) {
+            this.setState({ ...INITIAL_STATE, fighters: INITIAL_FIGHTERS });
+            this.updateEventID();
         }
+
+        event.preventDefault();
     }
 
     onChange = (event) => {
@@ -164,6 +140,29 @@ class RegistrationFormBase extends Component {
     removeFighter = idx => () => {
         this.setState({
             fighters: this.state.fighters.filter((f, fidx) => fidx !== idx)
+        });
+    }
+
+    updateEventID = () => {
+        var query = this.props.firebase.events()
+            .orderBy("dateObject", "desc")
+            .where("dateObject", ">", Date.now());
+
+        query.get().then(results => {
+            if (results.empty) {
+                // TODO: Disable registration since no event is available
+                console.log("No documents found");
+            } else {
+                let events = [];
+
+                results.forEach(doc => {
+                    events.push({ ...doc.data(), uid: doc.id });
+                })
+
+                this.setState({ events });
+                if (this.state.eventid.empty)
+                    this.setState({eventid: events[0].uid });
+            };
         });
     }
 
@@ -223,7 +222,7 @@ class RegistrationFormBase extends Component {
                     </Form.Row>
                         {fighters.map((fighter, idx) => {
                             return (
-                                <div>
+                                <p>
                                     <Form.Row>
                                         <h3>Fighter {idx+1} </h3>
                                         {idx > 0 && <p>
@@ -270,7 +269,7 @@ class RegistrationFormBase extends Component {
                                         <Form.Group as={Col}>
                                             <Form.Label>Sex</Form.Label>
                                             <Form.Control 
-                                                as="Select"
+                                                as="select"
                                                 name="sex"
                                                 value={fighter.sex}
                                                 data-id={idx}>
@@ -318,7 +317,7 @@ class RegistrationFormBase extends Component {
                                                 data-id={idx} />
                                         </Form.Group>
                                     </Form.Row>
-                                </div>
+                                </p>
                             )
                         })
                     }
@@ -339,7 +338,7 @@ class RegistrationFormBase extends Component {
                         </Button>
                     </Form.Group>
                 </Form>
-                {error && <div><Alert color="warning">{ error.message }</Alert></div>}
+                {error && <p><Alert color="warning">{ error.message }</Alert></p>}
             </Container>
         )
     }
