@@ -85,9 +85,8 @@ class RegistrationFormBase extends Component {
             });
         }
 
-        if (!error) {
+        if (!error) 
             this.resetForm();
-        }
 
         event.preventDefault();
     }
